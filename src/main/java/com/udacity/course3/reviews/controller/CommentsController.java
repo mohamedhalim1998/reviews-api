@@ -43,13 +43,8 @@ public class CommentsController {
         System.out.println(comment);
         if (review.isPresent()) {
             comment.setReviewId(reviewId);
-//            List<Comment> comments = new ArrayList<>(review.get().getComments());
             commentRepo.save(comment);
-//            comments.add(comment);
-//            review.get().setReview("edit review");
-//            review.get().setComments(comments);
-//            reviewsRepo.save(review.get());
-            return ResponseEntity.ok(comment);
+            return ResponseEntity.ok(review);
         }
         throw new RuntimeException("Review Not Found");
     }

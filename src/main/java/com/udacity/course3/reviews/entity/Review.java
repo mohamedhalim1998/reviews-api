@@ -1,6 +1,7 @@
 package com.udacity.course3.reviews.entity;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -12,10 +13,18 @@ public class Review {
     private long productId;
     private String review;
 
+    @OneToMany
+//    @JoinTable(
+//            name = "COMMENTS",
+//            joinColumns = {@JoinColumn(name = "reviewId", referencedColumnName = "id")}
+//    )
+
+    @JoinColumn(name = "reviewId", referencedColumnName = "id")
+    // While Update this will also insert collection row another insert
+    private List<Comment> comments;
 
     public Review() {
     }
-
 
 
     public Review(long id, long productId, String review) {
@@ -57,5 +66,18 @@ public class Review {
         this.review = review;
     }
 
+    public List<Comment> getComments() {
+        return comments;
+    }
 
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public void addComment(Comment comment) {
+        if(comments == null){
+            comments = new ArrayList<>();
+        }
+        comments.add(comment);
+    }
 }
