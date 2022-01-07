@@ -1,33 +1,27 @@
 package com.udacity.course3.reviews.entity;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "REVIEWS")
+@Document("reviews")
 public class Review {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private String id;
     private long productId;
     private String review;
 
-    @OneToMany
-//    @JoinTable(
-//            name = "COMMENTS",
-//            joinColumns = {@JoinColumn(name = "reviewId", referencedColumnName = "id")}
-//    )
 
-    @JoinColumn(name = "reviewId", referencedColumnName = "id")
-    // While Update this will also insert collection row another insert
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();
 
     public Review() {
     }
 
 
-    public Review(long id, long productId, String review) {
+    public Review(String id, long productId, String review) {
         this.id = id;
         this.productId = productId;
         this.review = review;
@@ -42,11 +36,11 @@ public class Review {
         this.review = review;
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -75,9 +69,7 @@ public class Review {
     }
 
     public void addComment(Comment comment) {
-        if(comments == null){
-            comments = new ArrayList<>();
-        }
+
         comments.add(comment);
     }
 }

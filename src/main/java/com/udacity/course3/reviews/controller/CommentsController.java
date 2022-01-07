@@ -2,15 +2,11 @@ package com.udacity.course3.reviews.controller;
 
 import com.udacity.course3.reviews.entity.Comment;
 import com.udacity.course3.reviews.entity.Review;
-import com.udacity.course3.reviews.repo.CommentRepo;
 import com.udacity.course3.reviews.repo.ReviewsRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpServerErrorException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,8 +20,6 @@ public class CommentsController {
     // TODO: Wire needed JPA repositories here
     @Autowired
     private ReviewsRepo reviewsRepo;
-    @Autowired
-    private CommentRepo commentRepo;
 
     /**
      * Creates a comment for a review.
@@ -38,12 +32,12 @@ public class CommentsController {
      * @param reviewId The id of the review.
      */
     @RequestMapping(value = "/reviews/{reviewId}", method = RequestMethod.POST)
-    public ResponseEntity<?> createCommentForReview(@PathVariable("reviewId") Integer reviewId, @RequestBody Comment comment) {
-        Optional<Review> review = reviewsRepo.findById((long) reviewId);
+    public ResponseEntity<?> createCommentForReview(@PathVariable("reviewId") String reviewId, @RequestBody Comment comment) {
+        Optional<Review> review = reviewsRepo.findById(reviewId);
         System.out.println(comment);
         if (review.isPresent()) {
-            comment.setReviewId(reviewId);
-            commentRepo.save(comment);
+            review.get().addComment(comment);
+            reviewsRepo.save(review.get());
             return ResponseEntity.ok(review);
         }
         throw new RuntimeException("Review Not Found");
@@ -59,9 +53,10 @@ public class CommentsController {
      * @param reviewId The id of the review.
      */
     @RequestMapping(value = "/reviews/{reviewId}", method = RequestMethod.GET)
-    public List<?> listCommentsForReview(@PathVariable("reviewId") Integer reviewId) {
-        if (reviewsRepo.findById((long) reviewId).isPresent()) {
-            return commentRepo.findByReviewId(reviewId);
+    public Review listCommentsForReview(@PathVariable("reviewId") String reviewId) {
+        Optional<Review> review = reviewsRepo.findById(reviewId);
+        if (review.isPresent()) {
+            return review.get();
         }
         throw new RuntimeException("Review not found");
     }
